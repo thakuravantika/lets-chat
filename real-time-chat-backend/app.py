@@ -16,9 +16,16 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 if not app.config["SECRET_KEY"]:
     raise RuntimeError("SECRET_KEY is missing")
-client = MongoClient("mongodb://localhost:27017/")
 
+mongo_uri = os.getenv("MONGO_URI")
+
+if not mongo_uri:
+    raise RuntimeError("MONGO_URI is missing")
+
+client = MongoClient(mongo_uri, serverSelectionTimeoutMS=10000)
 db = client["chat_app"]
+
+
 CORS(app)
 
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
